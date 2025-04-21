@@ -111,9 +111,30 @@ public abstract class ValueObject : IComparable, IComparable<ValueObject>
         var type = obj.GetType();
         var typeString = type.ToString();
 
-        if (typeString.Contains(EFCoreProxyPrefix) || typeString.EndsWith(NHibernateProxyPostfix))
+        if (typeString.Contains(EFCoreProxyPrefix, StringComparison.InvariantCulture) ||
+            typeString.EndsWith(NHibernateProxyPostfix, StringComparison.InvariantCulture))
             return type.BaseType!;
 
         return type;
+    }
+
+    public static bool operator <(ValueObject left, ValueObject right)
+    {
+        return left is null ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
+    }
+
+    public static bool operator <=(ValueObject left, ValueObject right)
+    {
+        return left is null || left.CompareTo(right) <= 0;
+    }
+
+    public static bool operator >(ValueObject left, ValueObject right)
+    {
+        return left is not null && left.CompareTo(right) > 0;
+    }
+
+    public static bool operator >=(ValueObject left, ValueObject right)
+    {
+        return left is null ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
     }
 }
