@@ -12,3 +12,6 @@
 
 - Setup test containers integration tests
 - OTEL setup
+- Operations => Environment => Make sure code style warning is not shown
+- Make IUserContext a scoped service
+- Test out channels for event bus

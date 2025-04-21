@@ -1,6 +1,8 @@
 ﻿using BackendBase.Domain.Interfaces;
 using BackendBase.Infrastructure.Data;
 using BackendBase.Infrastructure.Data.Interceptors;
+using BackendBase.Infrastructure.Events;
+using BackendBase.Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +27,9 @@ public static class Setup
 
         services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
         services.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
+
+        services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+        services.AddSingleton<IUserContext, UserContext>();
 
         return services;
     }
