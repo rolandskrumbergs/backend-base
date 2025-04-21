@@ -1,4 +1,5 @@
-﻿using BackendBase.Infrastructure.Data;
+﻿using BackendBase.Domain.Interfaces;
+using BackendBase.Infrastructure.Data;
 using BackendBase.Infrastructure.Data.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +22,9 @@ public static class Setup
                 .AddInterceptors(
                     serviceProvider.GetRequiredService<SoftDeleteInterceptor>(),
                     serviceProvider.GetRequiredService<AuditingInterceptor>()));
+
+        services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+        services.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
 
         return services;
     }
