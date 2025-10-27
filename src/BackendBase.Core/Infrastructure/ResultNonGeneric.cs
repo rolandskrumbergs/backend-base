@@ -1,39 +1,54 @@
 ﻿namespace BackendBase.Core.Infrastructure;
-public class Result
+
+public record Result : Result<Result>
 {
-    protected Result() { }
+    public Result() : base() { }
 
-    public Result(ResultStatus status) => Status = status;
-
-    public Result(string errorMessage) : this(ResultStatus.Error)
-        => Errors = new[] { errorMessage };
-
-    public ResultStatus Status { get; set; } = ResultStatus.Ok;
-
-    public bool IsSuccess => Status is ResultStatus.Ok or ResultStatus.NoContent or ResultStatus.Created;
-
-    public string SuccessMessage { get; set; } = string.Empty;
-
-    public IEnumerable<string> Errors { get; set; } = [];
+    protected internal Result(ResultStatus status) : base(status) { }
 
     public static Result Success() => new();
 
-    public static Result Success(string message) => new() { SuccessMessage = message };
+    public static Result SuccessWithMessage(string successMessage) => new() { SuccessMessage = successMessage };
 
-    public static Result Created() => new(ResultStatus.Created);
+    public static Result<T> Success<T>(T value) => new(value);
 
-    public static Result Error(string errorMessage) => new(errorMessage);
+    public static Result<T> Success<T>(T value, string successMessage) => new(value, successMessage);
 
-    public static Result Invalid(IEnumerable<string> errors)
-        => new(ResultStatus.Invalid) { Errors = errors };
+    public static Result<T> Created<T>(T value)
+    {
+        return Result<T>.Created(value);
+    }
 
-    public static Result NotFound() => new(ResultStatus.NotFound);
+    public static Result<T> Created<T>(T value, string location)
+    {
+        return Result<T>.Created(value, location);
+    }
 
-    public static Result NotFound(params string[] errorMessages)
-        => new(ResultStatus.NotFound) { Errors = errorMessages };
+    public new static Result Invalid(params string[] errorMessages) => new(ResultStatus.Invalid) { Errors = errorMessages };
 
-    public static Result Unauthorized() => new(ResultStatus.Unauthorized);
+    public new static Result Error(string errorMessage) => new(ResultStatus.Error) { Errors = new[] { errorMessage } };
 
-    public static Result Unauthorized(params string[] errorMessages)
-        => new(ResultStatus.Unauthorized) { Errors = errorMessages };
+    public new static Result Error(params string[] errorMessages) => new(ResultStatus.Error) { Errors = [.. errorMessages] };
+
+    public new static Result NotFound() => new Result(ResultStatus.NotFound);
+
+    public new static Result NotFound(params string[] errorMessages) => new(ResultStatus.NotFound) { Errors = errorMessages };
+
+    public new static Result Forbidden() => new(ResultStatus.Forbidden);
+
+    public new static Result Forbidden(params string[] errorMessages) => new(ResultStatus.Forbidden) { Errors = errorMessages };
+
+    public new static Result Unauthorized() => new(ResultStatus.Unauthorized);
+
+    public new static Result Unauthorized(params string[] errorMessages) => new(ResultStatus.Unauthorized) { Errors = errorMessages };
+
+    public new static Result Conflict() => new(ResultStatus.Conflict);
+
+    public new static Result Conflict(params string[] errorMessages) => new(ResultStatus.Conflict) { Errors = errorMessages };
+
+    public new static Result Unavailable(params string[] errorMessages) => new(ResultStatus.Unavailable) { Errors = errorMessages };
+
+    public new static Result CriticalError(params string[] errorMessages) => new(ResultStatus.CriticalError) { Errors = errorMessages };
+
+    public new static Result NoContent() => new(ResultStatus.NoContent);
 }
